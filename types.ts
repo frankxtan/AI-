@@ -3,7 +3,8 @@ export enum View {
   PROMPT_BUILDER = 'PROMPT_BUILDER',
   CHAT_TUTOR = 'CHAT_TUTOR',
   QUICK_REFINE = 'QUICK_REFINE',
-  LESSONS = 'LESSONS'
+  LESSONS = 'LESSONS',
+  MULTIMODAL = 'MULTIMODAL'
 }
 
 export interface Message {

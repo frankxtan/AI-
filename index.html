@@ -9,22 +9,80 @@
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #0f172a; /* Slate 900 */
+        background-color: #020617; /* Slate 950 */
         color: #e2e8f0; /* Slate 200 */
+        overflow: hidden; /* Prevent body scroll, handle in app */
       }
-      /* Custom scrollbar for webkit */
+      
+      /* Premium Nebula Background */
+      .bg-nebula {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #020617 60%);
+        overflow: hidden;
+      }
+      
+      .nebula-glow {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        animation: float 20s infinite ease-in-out;
+        pointer-events: none;
+      }
+
+      .nebula-glow-2 {
+        position: absolute;
+        top: 40%;
+        right: -10%;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        animation: float-reverse 25s infinite ease-in-out;
+        pointer-events: none;
+      }
+
+      @keyframes float {
+        0% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(-50px, 50px) scale(1.1); }
+        100% { transform: translate(0, 0) scale(1); }
+      }
+
+      @keyframes float-reverse {
+        0% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(50px, -30px) scale(0.9); }
+        100% { transform: translate(0, 0) scale(1); }
+      }
+
+      /* Custom scrollbar */
       ::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
+        height: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: #1e293b; 
+        background: transparent; 
       }
       ::-webkit-scrollbar-thumb {
-        background: #475569; 
-        border-radius: 4px;
+        background: rgba(71, 85, 105, 0.4); 
+        border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #64748b; 
+        background: rgba(100, 116, 139, 0.6); 
+      }
+      
+      /* Utility for hiding scrollbar but allowing scroll */
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
       }
     </style>
   <script type="importmap">
@@ -40,6 +98,10 @@
 </script>
 </head>
   <body>
+    <div class="bg-nebula">
+      <div class="nebula-glow" style="top: -10%; left: 20%;"></div>
+      <div class="nebula-glow-2"></div>
+    </div>
     <div id="root"></div>
   </body>
 </html>

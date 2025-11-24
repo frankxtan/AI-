@@ -4,6 +4,7 @@ import { Message } from "../types";
 // Constants for Models
 const MODEL_PRO = 'gemini-3-pro-preview';
 const MODEL_FLASH_LITE = 'gemini-flash-lite-latest'; 
+const MODEL_IMAGE_GEN = 'gemini-2.5-flash-image';
 
 // Initialize Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -77,6 +78,89 @@ export const buildStructurePrompt = async (
   } catch (error) {
     console.error("Builder error:", error);
     throw error;
+  }
+};
+
+/**
+ * Executes a prompt to test its performance.
+ * Uses Gemini 3 Pro for the best evaluation of the prompt's intent.
+ */
+export const executePrompt = async (prompt: string, testInput: string): Promise<string> => {
+  try {
+    // Combine prompt and input if input is provided
+    const finalContent = testInput 
+      ? `${prompt}\n\n---\n\n[测试输入数据]:\n${testInput}` 
+      : prompt;
+
+    const response = await ai.models.generateContent({
+      model: MODEL_PRO,
+      contents: finalContent,
+    });
+    return response.text || "无输出";
+  } catch (error) {
+    console.error("Execution error:", error);
+    return "运行测试时出错，请检查网络或 API Key。";
+  }
+};
+
+/**
+ * Multimodal Analysis using Gemini 3 Pro.
+ * Handles Image + Text Prompt.
+ */
+export const analyzeImage = async (prompt: string, base64Image: string, mimeType: string): Promise<string> => {
+  try {
+    const imagePart = {
+      inlineData: {
+        data: base64Image,
+        mimeType: mimeType
+      }
+    };
+
+    const response = await ai.models.generateContent({
+      model: MODEL_PRO,
+      contents: {
+        parts: [
+          imagePart,
+          { text: prompt }
+        ]
+      }
+    });
+
+    return response.text || "无法分析图片。";
+  } catch (error) {
+    console.error("Multimodal error:", error);
+    return "图片分析服务出错，请确保图片大小适中且格式正确。";
+  }
+};
+
+/**
+ * Generates an image based on the prompt using Gemini 2.5 Flash Image.
+ * Returns the base64 string of the image or null if failed.
+ */
+export const generateImage = async (prompt: string): Promise<string | null> => {
+  try {
+    const response = await ai.models.generateContent({
+      model: MODEL_IMAGE_GEN,
+      contents: {
+        parts: [
+          { text: prompt }
+        ],
+      },
+    });
+
+    // Iterate through parts to find inlineData (the image)
+    if (response.candidates && response.candidates[0].content.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData && part.inlineData.data) {
+          return part.inlineData.data;
+        }
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Image generation error:", error);
+    return null;
   }
 };
 
